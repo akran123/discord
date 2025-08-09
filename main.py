@@ -1,12 +1,17 @@
 import discord,random,os,datetime
 from discord.ext import commands
 from dotenv import load_dotenv
+import utils
 
 # .env 파일에서 환경변수 불러오기
 load_dotenv()
+# 토큰 설정
+TOKEN = os.getenv("TOKEN")
+
 
 bot = commands.Bot(command_prefix="%",intents=discord.Intents.all())
-TOKEN = os.getenv("TOKEN")
+
+
 
 @bot.event
 async def on_ready():
@@ -101,6 +106,7 @@ async def add_channel_to_category(ctx, category_name : str,channel_name:str):
         await ctx.send(f'**{category.name}** 카테고리에 {new_channel.mention} 채널이 성공적으로 생성되었습니다.')
     except discord.HTTPException:
         await ctx.send("채널 생성에 실패했습니다. 올바른 이름인지 확인해주세요.")
+
 
 
 bot.run(TOKEN)
