@@ -1,3 +1,5 @@
 .env
 test.py
 my_backup.json
+backups/
+chat_backups/

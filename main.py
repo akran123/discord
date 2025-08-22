@@ -1,7 +1,9 @@
-import discord,random,os,datetime
+import discord,random,os,datetime,requests
 from discord.ext import commands
 from dotenv import load_dotenv
-import utils
+import json
+import asyncio
+
 
 # .env 파일에서 환경변수 불러오기
 load_dotenv()
@@ -109,4 +111,222 @@ async def add_channel_to_category(ctx, category_name : str,channel_name:str):
 
 
 
+#@commands.has_role("관리자")
+@bot.command(name="구조백업")
+async def backup_all(ctx):
+    guild = ctx.guild
+    backup_data = {
+        "guild_id": guild.id,
+        "roles": [],
+        "categories":[],
+        "channels": [],
+        "webhooks": {}
+    }
+
+    # 역할 백업
+    for role in guild.roles:
+        if role.name != "@everyone":
+            backup_data["roles"].append({
+                "name": role.name,
+                "permissions": role.permissions.value,
+                "color": role.color.value,
+                "position": role.position
+            })
+    # ✅ 카테고리 채널 백업
+    for category in guild.categories:
+        backup_data["categories"].append({
+            "name": category.name,
+            "position": category.position
+        })
+
+    # 채널 백업
+    for channel in guild.channels:
+        backup_data["channels"].append({
+            "name": channel.name,
+            "type": str(channel.type),
+            "category": channel.category.name if channel.category else None,
+            "position": channel.position
+        })
+
+    # 웹훅 백업
+    for channel in guild.text_channels:
+        webhooks = await channel.webhooks()
+        backup_data["webhooks"][channel.name] = [{
+            "name": webhook.name,
+            "url": webhook.url
+        } for webhook in webhooks]
+
+    # 저장
+    os.makedirs("backups", exist_ok=True)
+    with open(f"backups/backup_{guild.id}.json", "w", encoding="utf-8") as f:
+        json.dump(backup_data, f, ensure_ascii=False, indent=4)
+
+    await ctx.send("✅ 서버 구조가 백업되었습니다.")
+
+# ========== 복원 ==========
+
+
+@bot.command(name="구조복구")
+async def restore_all(ctx):
+    try:
+        with open(f"backups/backup_{ctx.guild.id}.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        # ✅ 역할 복원
+        for role_data in data["roles"]:
+            role = await ctx.guild.create_role(
+                name=role_data["name"],
+                permissions=discord.Permissions(role_data["permissions"]),
+                colour=discord.Colour(role_data["color"])
+            )
+            await role.edit(position=role_data["position"])
+
+        # ✅ 카테고리 복원
+        categories = {}
+        for cat_data in data["categories"]:
+            category = await ctx.guild.create_category(
+                name=cat_data["name"],
+                position=cat_data["position"]
+            )
+            categories[cat_data["name"]] = category
+
+        # ✅ 채널 복원 (텍스트/음성)
+        channel_objects = {}
+        for ch_data in data["channels"]:
+            category = categories.get(ch_data["category"])
+            new_channel = None
+
+            if ch_data["type"] == "text":
+                new_channel = await ctx.guild.create_text_channel(
+                    name=ch_data["name"],
+                    category=category,
+                    position=ch_data["position"]
+                )
+            elif ch_data["type"] == "voice":
+                new_channel = await ctx.guild.create_voice_channel(
+                    name=ch_data["name"],
+                    category=category,
+                    position=ch_data["position"]
+                )
+
+            # 복원된 채널 객체를 저장
+            if new_channel:
+                channel_objects[ch_data["name"]] = new_channel
+
+        # 웹훅 복원 or 생성
+        for ch_name, webhooks in data["webhooks"].items():
+            channel = channel_objects.get(ch_name)
+            if not channel:
+                continue
+
+            existing_webhooks = await channel.webhooks()
+
+            if webhooks:  # 기존 웹훅 데이터가 있으면 사용
+                for webhook_data in webhooks:
+                    await channel.create_webhook(name=webhook_data["name"])
+            elif not existing_webhooks:  # 웹훅이 없을 경우 새로 생성
+                new_webhook = await channel.create_webhook(name="자동복구봇")
+                print(f"[웹훅 생성됨] {channel.name} → {new_webhook.url}")
+
+        await ctx.send("서버 구조와 웹훅이 복원되었습니다.")
+
+    except FileNotFoundError:
+        await ctx.send("백업 파일이 존재하지 않습니다.")
+
+# ========== 채팅 백업 ==========
+
+#@commands.has_role("관리자")
+@bot.command(name="채팅백업")
+async def backup_chat(ctx, limit: int = 100):
+    guild = ctx.guild
+    backup_count = 0
+
+    os.makedirs("chat_backups", exist_ok=True)
+
+    for channel in guild.text_channels:
+        try:
+            messages_data = []
+            async for msg in channel.history(limit=limit, oldest_first=True):
+                messages_data.append({
+                    "author": msg.author.name,
+                    "content": msg.content,
+                    "timestamp": str(msg.created_at)
+                })
+
+            if messages_data:
+                file_path = f"chat_backups/{guild.id}_{channel.name}.json"
+                with open(file_path, "w", encoding="utf-8") as f:
+                    json.dump(messages_data, f, ensure_ascii=False, indent=4)
+                backup_count += 1
+                print(f"백업 완료 {channel.name} → {len(messages_data)}개 메시지")
+        except Exception as e:
+            print(f"백업 실패 {channel.name}: {e}")
+            continue
+
+    await ctx.send(f"총 {backup_count}개의 텍스트 채널이 백업되었습니다.")
+
+# ========== 채팅 복원 ==========
+
+#@commands.has_role("관리자")
+@bot.command(name="채팅복구")
+async def restore_chat(ctx):
+    guild = ctx.guild
+    restored_count = 0
+
+    for file in os.listdir("chat_backups"):
+        if not file.startswith(str(guild.id)):
+            continue  # 다른 서버의 백업은 건너뜀
+
+        try:
+            _, channel_name_with_ext = file.split("_", 1)
+            channel_name = channel_name_with_ext.replace(".json", "")
+
+            # 채널 찾기
+            channel = discord.utils.get(guild.text_channels, name=channel_name)
+            if not channel:
+                print(f" 채널 '{channel_name}' 을(를) 찾을 수 없습니다.")
+                continue
+
+            # 웹훅 찾기 or 생성
+            webhooks = await channel.webhooks()
+            if webhooks:
+                webhook = webhooks[0]
+            else:
+                webhook = await channel.create_webhook(name="채팅복원봇")
+
+            # 채팅 로드
+            with open(f"chat_backups/{file}", "r", encoding="utf-8") as f:
+                messages = json.load(f)
+
+            # 웹훅으로 메시지 전송
+            for msg in messages:
+                requests.post(webhook.url, json={
+                    "content": msg['content'],
+                    "username": msg['author']
+                })
+                await asyncio.sleep(0.3)
+
+            restored_count += 1
+            print(f"채널 '{channel_name}' 복원 완료.")
+
+        except Exception as e:
+            print(f"'{file}' 처리 중 오류 발생: {e}")
+
+    await ctx.send(f"총 {restored_count}개 채널의 채팅이 복원되었습니다.")
+
+
+
+#@commands.has_role("관리자")
+@bot.command(name="데이터삭제")
+async def delete_data(ctx) :
+    try:
+        # 기존 채널 제거
+        for channel in ctx.guild.channels:
+            await channel.delete()
+        # 기존 역할 제거
+        for role in ctx.guild.roles:
+            if role.name != "@everyone":
+                await role.delete()
+    except :
+        await ctx.send("데이터 삭제에 실패하였습니다")
 bot.run(TOKEN)

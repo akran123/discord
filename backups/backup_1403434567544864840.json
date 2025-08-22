@@ -1,0 +1,267 @@
+{
+    "guild_id": 1403434567544864840,
+    "roles": [
+        {
+            "name": "test",
+            "permissions": 8,
+            "color": 0,
+            "position": 1
+        },
+        {
+            "name": "Zira",
+            "permissions": 268790856,
+            "color": 0,
+            "position": 2
+        },
+        {
+            "name": "Zira",
+            "permissions": 268790856,
+            "color": 0,
+            "position": 3
+        },
+        {
+            "name": "test",
+            "permissions": 8,
+            "color": 0,
+            "position": 4
+        },
+        {
+            "name": "test",
+            "permissions": 8,
+            "color": 0,
+            "position": 5
+        },
+        {
+            "name": "Zira",
+            "permissions": 268790856,
+            "color": 0,
+            "position": 6
+        },
+        {
+            "name": "test",
+            "permissions": 8,
+            "color": 0,
+            "position": 7
+        },
+        {
+            "name": "Zira",
+            "permissions": 268790856,
+            "color": 0,
+            "position": 8
+        },
+        {
+            "name": "손님은 왕이다",
+            "permissions": 0,
+            "color": 15844367,
+            "position": 9
+        },
+        {
+            "name": "관리자",
+            "permissions": 0,
+            "color": 14675950,
+            "position": 10
+        },
+        {
+            "name": "명재완",
+            "permissions": 0,
+            "color": 0,
+            "position": 11
+        },
+        {
+            "name": "test",
+            "permissions": 8,
+            "color": 0,
+            "position": 12
+        },
+        {
+            "name": "Zira",
+            "permissions": 268790856,
+            "color": 0,
+            "position": 13
+        },
+        {
+            "name": "Zira",
+            "permissions": 268790856,
+            "color": 0,
+            "position": 14
+        },
+        {
+            "name": "test",
+            "permissions": 8,
+            "color": 0,
+            "position": 15
+        },
+        {
+            "name": "test",
+            "permissions": 8,
+            "color": 0,
+            "position": 16
+        },
+        {
+            "name": "Zira",
+            "permissions": 268790856,
+            "color": 0,
+            "position": 17
+        },
+        {
+            "name": "Zira",
+            "permissions": 268790856,
+            "color": 0,
+            "position": 18
+        },
+        {
+            "name": "test",
+            "permissions": 8,
+            "color": 0,
+            "position": 19
+        }
+    ],
+    "categories": [
+        {
+            "name": "채팅",
+            "position": 0
+        }
+    ],
+    "channels": [
+        {
+            "name": "ㅁㄴ",
+            "type": "text",
+            "category": null,
+            "position": 0
+        },
+        {
+            "name": "채팅",
+            "type": "category",
+            "category": null,
+            "position": 0
+        },
+        {
+            "name": "ㅇ",
+            "type": "text",
+            "category": null,
+            "position": 0
+        },
+        {
+            "name": "채팅-채널",
+            "type": "text",
+            "category": "채팅",
+            "position": 7
+        },
+        {
+            "name": "음성-채널",
+            "type": "text",
+            "category": "채팅",
+            "position": 9
+        },
+        {
+            "name": "일반",
+            "type": "text",
+            "category": "채팅",
+            "position": 8
+        },
+        {
+            "name": "일반",
+            "type": "text",
+            "category": null,
+            "position": 1
+        },
+        {
+            "name": "서버",
+            "type": "text",
+            "category": null,
+            "position": 2
+        },
+        {
+            "name": "명령어",
+            "type": "text",
+            "category": null,
+            "position": 3
+        },
+        {
+            "name": "장갑",
+            "type": "text",
+            "category": null,
+            "position": 4
+        },
+        {
+            "name": "역할-부여",
+            "type": "text",
+            "category": null,
+            "position": 5
+        },
+        {
+            "name": "명령어2",
+            "type": "text",
+            "category": null,
+            "position": 6
+        },
+        {
+            "name": "명령어1",
+            "type": "text",
+            "category": null,
+            "position": 10
+        }
+    ],
+    "webhooks": {
+        "ㅁㄴ": [],
+        "ㅇ": [
+            {
+                "name": "자동복구봇",
+                "url": "https://discord.com/api/webhooks/1408455215446888578/muhar7OHYxng13nafwvD4BubFFTIF4Ki7rQwHaPyCAryx39u3kvBosaQ6Tf3M6fFdIrO"
+            }
+        ],
+        "일반": [],
+        "서버": [
+            {
+                "name": "자동복구봇",
+                "url": "https://discord.com/api/webhooks/1408455221243543636/O4oO08z_uCenA-vVBgjjd2BGYZF1emeaT02zQ9DxAq0CRdly0wR_ZjKIxH5qLrTC6sLI"
+            }
+        ],
+        "명령어": [
+            {
+                "name": "Spidey Bot",
+                "url": "https://discord.com/api/webhooks/1408455224451924040/sZS_qL89fLsOoKfJMKxxiyJRVEU4JNlCLtOCrmpov1Xza5b4imInxmH3VNR0rjqOeaHy"
+            },
+            {
+                "name": "Spidey Bot",
+                "url": "https://discord.com/api/webhooks/1408455225664209079/djNHiQFqIuiYVNApHAocBUwrlVKriRA4R0cjTAr-hWrCzm0fruO5l3xEYBbLjTJAi7HY"
+            }
+        ],
+        "장갑": [
+            {
+                "name": "자동복구봇",
+                "url": "https://discord.com/api/webhooks/1408455229673832742/7FaA8TCCTsLKNNn3nV0f1fOscPdus-7Fu8wRt9A6XLkEDoCgR8OofcNkLmIT18qpAQCx"
+            }
+        ],
+        "역할-부여": [
+            {
+                "name": "자동복구봇",
+                "url": "https://discord.com/api/webhooks/1408455232987594872/QsSSYbswj5ppF4DgPMAxNI22RdIb0tAMylfRDAQyYf4mnrz5ldBBabS02XRwFHDkjFzD"
+            }
+        ],
+        "명령어2": [
+            {
+                "name": "자동복구봇",
+                "url": "https://discord.com/api/webhooks/1408455236166881435/c9EEnkeW1ZLX-kPEJK2oLvsTtIwM93hcvlxym5zCQBWWv0u52iR4Mgw4TDk1kiZ6YeM1"
+            }
+        ],
+        "채팅-채널": [
+            {
+                "name": "자동복구봇",
+                "url": "https://discord.com/api/webhooks/1408455239937298473/eJt8BpUb8trqAdEquwMz_FK_kHhgr45wTvPRSLLEMhLUFKlF-fQsGsPdEdN3YjxIujX9"
+            }
+        ],
+        "음성-채널": [
+            {
+                "name": "자동복구봇",
+                "url": "https://discord.com/api/webhooks/1408455243402051664/e6o-V7lNNVdTQcKmchSYnEhmlHHSVLQDfZR1SSwQtCjnV78p7bR-hlnI4Duqris8GkLN"
+            }
+        ],
+        "명령어1": [
+            {
+                "name": "자동복구봇",
+                "url": "https://discord.com/api/webhooks/1408455246878998560/zVgcuHs-QCNWeqE9Hm59yuXm_AzfRqUiFCCk3mwa1rGNzxc7QK-MOBw3_HkV1izkhAwb"
+            }
+        ]
+    }
+}
